@@ -5,11 +5,6 @@ const { todos } = require("./db");
 const app = express();
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  const todos = await todos.find({});
-  res.send(todos);
-});
-
 app.post("/myTodos", async (req, res) => {
   const createPayload = req.body;
   const parsedPayload = createTodo.safeParse(createPayload);
@@ -22,12 +17,17 @@ app.post("/myTodos", async (req, res) => {
   await todos.create({
     title: createPayload.title,
     description: createPayload.description,
-    completd: false,
+    completed: false,
   });
   res.json({
     msg: "Todo created",
   });
   return;
+});
+
+app.get("/", async (req, res) => {
+  const getTodos = await todos.find({});
+  res.send(getTodos);
 });
 
 app.put("/update", async (req, res) => {
