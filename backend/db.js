@@ -4,7 +4,7 @@ mongoose.connect(
 );
 
 const todosSchema = mongoose.Schema({
-  id: String,
+  completed: Boolean,
   title: String,
   description: String,
 });

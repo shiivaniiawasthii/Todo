@@ -1,14 +1,16 @@
 const express = require("express");
 const { createTodo, updateTodo } = require("./types");
+const { todos } = require("./db");
 
 const app = express();
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("welcome to your todos");
+app.get("/", async (req, res) => {
+  const todos = await todos.find({});
+  res.send(todos);
 });
 
-app.post("/myTodos", (req, res) => {
+app.post("/myTodos", async (req, res) => {
   const createPayload = req.body;
   const parsedPayload = createTodo.safeParse(createPayload);
   if (!parsedPayload.success) {
@@ -16,10 +18,19 @@ app.post("/myTodos", (req, res) => {
       msg: "You sent wrong inputs",
     });
   }
+  // put it on mongodb
+  await todos.create({
+    title: createPayload.title,
+    description: createPayload.description,
+    completd: false,
+  });
+  res.json({
+    msg: "Todo created",
+  });
   return;
 });
 
-app.put("/update", (req, res) => {
+app.put("/update", async (req, res) => {
   const updatePayload = req.body;
   const parsedPayload = updateTodo.safeParse(updatePayload);
   if (!parsedPayload) {
@@ -27,6 +38,14 @@ app.put("/update", (req, res) => {
       msg: "You sent wrong input",
     });
   }
+  // put it on mongodb
+  await todos.update(
+    {
+      _id: req.body.id,
+    },
+    { completed: true }
+  );
+  res.json({ msg: "Todo is updated" });
 });
 
 app.listen(8080);
