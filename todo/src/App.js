@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import "./App.css";
+import CreateTodo from "./components/CreateTodo";
+import Todos from "./components/Todos";
+import { useState } from "react";
+const todos = [];
 
 function App() {
+  const [todos, setTodos] = useState([
+    { title: "hey1", description: "hey2", completed: true },
+    { title: "heyyy1", description: "hey2", completed: false },
+  ]);
+  async function fetchingData(url) {
+    const data = await fetch(url);
+    const res = await data.json();
+    console.log(res);
+    setTodos(res);
+  }
+  useEffect(() => {
+    fetchingData("http://localhost:8080/");
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <CreateTodo />
+      <Todos todos={todos} />
     </div>
   );
 }
