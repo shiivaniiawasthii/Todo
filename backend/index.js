@@ -1,5 +1,5 @@
 const express = require("express");
-const { createTodo, updateTodo } = require("./types");
+const { createTodo, updateTodo, deleteTodo } = require("./types");
 const { todos } = require("./db");
 const cors = require("cors");
 
@@ -34,6 +34,7 @@ app.get("/", async (req, res) => {
 
 app.put("/update", async (req, res) => {
   const updatePayload = req.body;
+  console.log(updatePayload, "updatedpayload");
   const parsedPayload = updateTodo.safeParse(updatePayload);
   if (!parsedPayload) {
     res.status(411).json({
@@ -41,13 +42,42 @@ app.put("/update", async (req, res) => {
     });
   }
   // put it on mongodb
-  await todos.update(
-    {
-      _id: req.body.id,
-    },
-    { completed: true }
+  await todos.findByIdAndUpdate(
+    { _id: req.body.id },
+    { completed: !req.body.completed }
   );
+
   res.json({ msg: "Todo is updated" });
+});
+
+app.delete("/delete", async (req, res) => {
+  const updatePayload = req.body;
+  const parsedPayload = deleteTodo.safeParse(updatePayload);
+  if (!parsedPayload) {
+    res.status(411).json({
+      msg: "You sent wrong input",
+    });
+  }
+
+  try {
+    const { id } = req.body; // Extract the todo ID from the request body
+
+    // Find the todo by its ID and delete it
+    const deletedTodo = await todos.findByIdAndDelete(id);
+
+    if (!deletedTodo) {
+      return res.status(404).json({
+        msg: "Todo not found",
+      });
+    }
+
+    res.json({ msg: "Todo deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting todo:", error);
+    res.status(500).json({
+      msg: "Internal Server Error",
+    });
+  }
 });
 
 app.listen(8080);
