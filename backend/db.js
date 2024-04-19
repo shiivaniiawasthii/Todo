@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.connect(
-  "mongodb+srv://shvaniawsthi001:HYOZLyCVvafbyD61@cluster0.qhsd9rl.mongodb.net/todos"
+  "mongodb+srv://shvaniawsthi001:BuoTynB61VbCYe7V@cluster0.xmzm0fp.mongodb.net/todos"
 );
 
 const todosSchema = mongoose.Schema({

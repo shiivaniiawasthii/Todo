@@ -34,6 +34,7 @@ app.get("/", async (req, res) => {
 
 app.put("/update", async (req, res) => {
   const updatePayload = req.body;
+  console.log(updatePayload, "updatedpayload");
   const parsedPayload = updateTodo.safeParse(updatePayload);
   if (!parsedPayload) {
     res.status(411).json({
@@ -41,12 +42,11 @@ app.put("/update", async (req, res) => {
     });
   }
   // put it on mongodb
-  await todos.update(
-    {
-      _id: req.body.id,
-    },
-    { completed: true }
+  await todos.findByIdAndUpdate(
+    { _id: req.body.id },
+    { completed: !req.body.completed }
   );
+
   res.json({ msg: "Todo is updated" });
 });
 
