@@ -11,27 +11,24 @@ function CreateTodo() {
       [name]: value,
     });
   };
-
-  const handleUpdateTodo = async (id, updatedData) => {
-    try {
-      const data = await fetch("http://localhost:8080/update", {
-        method: "PUT",
-        body: JSON.stringify({
-          id: id,
-          ...updatedData, // Include updated data along with the id
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(data);
-      const res = await data.json();
-      console.log(res);
-      if (res) alert("updated");
-    } catch (error) {
-      console.error("Error updating todo:", error);
-      alert("An error occurred while updating todo. Please try again later.");
-    }
+  const handleAddingTodo = async () => {
+    setTodos([...todos, todo]);
+    setTodo({ title: "", description: "" });
+    console.log(todo);
+    const data = await fetch("http://localhost:8080/myTodos", {
+      method: "POST",
+      body: JSON.stringify({
+        title: todo.title,
+        description: todo.description,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(data);
+    const res = await data.json();
+    console.log(res);
+    if (res) alert("added");
   };
 
   return (
@@ -59,7 +56,7 @@ function CreateTodo() {
       </div>
 
       <button
-        onClick={handleUpdateTodo}
+        onClick={handleAddingTodo}
         className=" bg-blue-500 p-9 absolute text-bold font-2xl top-0 right-0 font-bold text-white hover:bg-blue-700 "
       >
         {" "}
